@@ -3,274 +3,279 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nossa História - Presente</title>
+    <title>Nossa História - Spotify Edition</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap');
 
         :root {
             --spotify-green: #1DB954;
             --spotify-black: #121212;
-            --spotify-light-black: #181818;
+            --spotify-dark-grey: #181818;
+            --spotify-light-grey: #282828;
             --spotify-pink: #E8115B;
             --white: #FFFFFF;
-            --gray: #B3B3B3;
+            --text-gray: #B3B3B3;
         }
 
         * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+            margin: 0; padding: 0; box-sizing: border-box;
             font-family: 'Montserrat', sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            background-color: #000;
-            color: var(--white);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            overflow: hidden;
+            background-color: #000; color: var(--white);
+            display: flex; justify-content: center; align-items: center;
+            min-height: 100vh; overflow: hidden; touch-action: manipulation;
         }
 
         #app-container {
-            width: 100%;
-            max-width: 390px;
-            height: 100vh;
-            background-color: var(--spotify-black);
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
-            overflow: hidden;
+            width: 100%; max-width: 390px; height: 100vh;
+            background: linear-gradient(180deg, #1e1e1e 0%, #121212 100%);
+            position: relative; display: flex; flex-direction: column;
+            overflow: hidden; border: 1px solid rgba(255,255,255,0.05);
         }
 
-        /* Slides */
+        .bg-glow {
+            position: absolute; top: -100px; left: -100px;
+            width: 300px; height: 300px;
+            background: radial-gradient(circle, rgba(29, 185, 84, 0.15) 0%, transparent 70%);
+            z-index: 0; pointer-events: none;
+        }
+
         .slide {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            padding: 40px 25px 120px 25px; /* Padding extra embaixo para o player */
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            opacity: 0;
-            transform: scale(0.95);
-            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-            pointer-events: none;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            padding: 40px 30px 140px 30px; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; text-align: center;
+            opacity: 0; visibility: hidden; 
+            transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
             z-index: 1;
         }
 
-        .slide.active {
-            opacity: 1;
-            transform: scale(1);
-            pointer-events: auto;
-            z-index: 2;
+        .slide.active { opacity: 1; visibility: visible; z-index: 2; }
+
+        .slide h1, .slide h2, .slide p, .slide .verse, .slide .music-player-container {
+            transform: translateY(30px); opacity: 0; transition: all 0.6s ease-out;
         }
 
-        /* Tipografia */
-        h1 { font-size: 2.2rem; font-weight: 700; margin-bottom: 20px; color: var(--spotify-green); line-height: 1.1; }
-        h2 { font-size: 1.5rem; margin-bottom: 15px; color: var(--white); }
-        p { font-size: 0.95rem; line-height: 1.6; color: var(--gray); margin-bottom: 15px; }
-        .verse { font-style: italic; color: var(--spotify-pink); font-weight: 700; margin-top: 10px; font-size: 0.9rem; }
+        .slide.active h1, .slide.active h2, .slide.active p, .slide.active .verse, .slide.active .music-player-container {
+            transform: translateY(0); opacity: 1;
+        }
 
-        /* Spotify Player Widget */
+        h1 { font-size: 2.4rem; font-weight: 800; color: var(--spotify-green); margin-bottom: 15px; letter-spacing: -1px; }
+        h2 { font-size: 1.8rem; font-weight: 700; margin-bottom: 20px; }
+        p { font-size: 1rem; color: var(--text-gray); line-height: 1.6; }
+        
+        .verse {
+            margin-top: 25px; padding: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-left: 3px solid var(--spotify-pink);
+            border-radius: 4px; font-style: italic; font-size: 0.9rem; color: #eee;
+        }
+
         .music-player-container {
-            width: 90%;
-            margin-top: 20px;
-            border-radius: 12px;
-            overflow: hidden;
-            background: #000;
-            min-height: 80px;
+            width: 100%; margin-top: 30px; border-radius: 12px; overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); min-height: 80px;
         }
 
-        /* Navegação */
+        #counter {
+            width: 100%; padding: 25px; background: rgba(255,255,255,0.05);
+            border-radius: 20px; margin-top: 20px; backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .counter-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; color: var(--spotify-green); font-weight: 600; }
+        .time-unit { font-size: 1.5rem; display: block; color: var(--white); font-weight: 800; margin-top: 10px;}
+        .time-sub { font-size: 0.9rem; color: var(--text-gray); }
+
+        .photo-grid {
+            display: grid; grid-template-columns: 1fr; gap: 20px; width: 100%;
+            max-height: 65vh; overflow-y: auto; padding: 10px 5px; scrollbar-width: none;
+        }
+        .photo-grid::-webkit-scrollbar { display: none; }
+        .photo-item {
+            background: var(--spotify-light-grey); padding: 12px; border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        .photo-item img {
+            width: 100%; height: 280px; object-fit: cover; border-radius: 10px; margin-bottom: 10px; display: block;
+        }
+        .photo-date { font-size: 0.8rem; font-weight: 600; color: var(--spotify-green); text-align: left; }
+
+        /* NAVEGAÇÃO ESTILO SPOTIFY */
         .nav-buttons {
-            position: absolute;
-            bottom: 20px;
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            padding: 0 30px;
-            z-index: 20;
+            position: absolute; bottom: 40px; width: 100%;
+            display: flex; justify-content: center; align-items: center;
+            gap: 30px; z-index: 100;
         }
 
         .nav-btn {
-            background: rgba(255, 255, 255, 0.1);
-            border: none;
-            color: white;
-            padding: 12px 20px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 0.8rem;
-            backdrop-filter: blur(5px);
+            background: none; border: none; color: white;
+            cursor: pointer; display: flex; justify-content: center; align-items: center;
+            transition: all 0.2s ease;
         }
 
-        /* Contador */
-        #counter {
-            background: linear-gradient(145deg, #181818, #282828);
-            padding: 20px;
-            border-radius: 15px;
-            border-left: 4px solid var(--spotify-green);
-            width: 100%;
-            margin-top: 10px;
-        }
-        .counter-num { color: var(--spotify-green); font-weight: bold; font-size: 1.3rem; display: block; margin-bottom: 5px; }
+        .nav-btn svg { width: 32px; height: 32px; fill: currentColor; }
+        .nav-btn:active { transform: scale(0.9); color: var(--spotify-green); }
 
-        /* Grid de Fotos */
-        .photo-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            width: 100%;
-            max-height: 55vh;
-            overflow-y: auto;
-            padding: 10px 5px;
+        .nav-btn.play-btn {
+            background: var(--white); color: black;
+            width: 60px; height: 60px; border-radius: 50%;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
         }
-        .photo-item {
-            background: #282828;
-            padding: 5px;
-            border-radius: 8px;
-            position: relative;
-        }
-        .photo-item img {
-            width: 100%;
-            height: 110px;
-            object-fit: cover;
-            border-radius: 4px;
-        }
-        .photo-date { font-size: 0.65rem; color: var(--spotify-green); margin-top: 5px; font-weight: bold; }
+        .nav-btn.play-btn svg { width: 26px; height: 26px; }
+        .nav-btn.play-btn:active { background: var(--spotify-green); transform: scale(0.95); }
 
-        /* Admin */
-        #admin-panel {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            z-index: 100;
+        /* CORAÇÕES */
+        .floating-heart {
+            position: fixed; color: var(--spotify-green); pointer-events: none;
+            z-index: 9999; animation: floatAndFade 1.5s ease-out forwards;
         }
-        #add-photo-btn {
-            background: var(--spotify-pink);
-            border: none;
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            color: white;
-            font-size: 20px;
-            cursor: pointer;
-            opacity: 0.3; /* Escondido discretamente */
-            transition: opacity 0.3s;
+        @keyframes floatAndFade {
+            0% { transform: translateY(0) scale(1) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-150px) scale(1.5) rotate(20deg); opacity: 0; }
         }
-        #add-photo-btn:hover { opacity: 1; }
-        #file-input { display: none; }
-
-        /* Scrollbar */
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-thumb { background: var(--spotify-green); border-radius: 10px; }
-
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
     </style>
 </head>
 <body>
 
     <div id="app-container">
-        <!-- Botão Admin -->
-        <div id="admin-panel">
-            <button id="add-photo-btn" onclick="checkAdmin()">+</button>
-            <input type="file" id="file-input" accept="image/*">
-        </div>
+        <div class="bg-glow"></div>
 
-        <!-- Tela 1: Abertura + Música -->
-        <section class="slide active" id="slide-0">
+        <!-- TELA 1 -->
+        <section class="slide active">
+            <p style="color: var(--spotify-green); font-weight: 600; letter-spacing: 2px; margin-bottom: 5px;">SPECIAL PLAYLIST</p>
             <h1>Nossa história</h1>
-            <p>Dê o play para começar a nossa jornada...</p>
-            
-            <div class="music-player-container">
-                <!-- Iframe do Spotify -->
-                <iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/1DLKuppSYytOuxhtI6KBGu?utm_source=generator&theme=0" width="100%" height="80" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-            </div>
-            
-            <p style="margin-top: 20px; font-size: 0.8rem; color: var(--spotify-green);">Deslize ou use os botões abaixo</p>
+            <p>A trilha sonora perfeita para o meu momento favorito: você.</p>
+            <div class="music-player-container" id="embed-iframe"></div>
         </section>
 
-        <!-- Tela 2: Timeline -->
-        <section class="slide" id="slide-1">
-            <h2>Desde o início...</h2>
-            <p>🗓️ <strong>02/01/2025</strong><br>Onde nossos caminhos se cruzaram.</p>
-            <p>❤️ <strong>05/01/2025</strong><br>Onde o "nós" começou oficialmente.</p>
+        <!-- TELA 2 -->
+        <section class="slide">
+            <h2>Onde tudo mudou</h2>
+            <p>🗓️ 02 Jan 2025<br>O dia que nos conhecemos.</p>
+            <p>❤️ 05 Jan 2025<br>O dia que começamos a namorar.</p>
             <div id="counter">
-                <span style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px;">Estamos juntos há:</span>
-                <div id="timer-display">Calculando...</div>
+                <span class="counter-label">Tempo de Felicidade</span>
+                <div id="timer-display"></div>
             </div>
         </section>
 
-        <!-- Tela 3: Olhos -->
-        <section class="slide" id="slide-2">
+        <!-- TELA 3 -->
+        <section class="slide">
             <h2>Seus olhos</h2>
-            <p>Eles refletem uma paz que eu nunca imaginei encontrar. O verde mais lindo que já vi.</p>
-            <p class="verse">"Como você é linda, minha querida! Ah, como é linda! Os seus olhos são pombas."<br>(Cantares 1:15)</p>
+            <p>Existe um universo inteiro no brilho dos seus olhos. O verde mais profundo e doce que já vi.</p>
+            <div class="verse">"Como você é linda, minha querida! Ah, como é linda! Os seus olhos são pombas."<br>— Cantares 1:15</div>
         </section>
 
-        <!-- Tela 4: Sorriso -->
-        <section class="slide" id="slide-3">
+        <!-- TELA 4 -->
+        <section class="slide">
             <h2>Seu sorriso</h2>
-            <p>Ele tem o poder de iluminar o meu dia mais escuro. É o meu abrigo favorito.</p>
-            <p class="verse">"A alegria do coração transparece no rosto..."<br>(Provérbios 15:13)</p>
+            <p>Seu sorriso ilumina cada canto da minha alma.</p>
+            <div class="verse">"A alegria do coração transparece no rosto..."<br>— Provérbios 15:13</div>
         </section>
 
-        <!-- Tela 5: Cuidado -->
-        <section class="slide" id="slide-4">
+        <!-- TELA 5 -->
+        <section class="slide">
             <h2>Seu cuidado</h2>
-            <p>Obrigado por ser tão atenciosa e por me amar com tanta paciência e dedicação.</p>
-            <p class="verse">"O amor é paciente, o amor é bondoso... Tudo sofre, tudo crê, tudo espera, tudo suporta."<br>(1 Coríntios 13:4,7)</p>
+            <p>Obrigado por me cuidar com tanta doçura.</p>
+            <div class="verse">"O amor é paciente, o amor é bondoso..."<br>— 1 Coríntios 13:4,7</div>
         </section>
 
-        <!-- Tela 6: Pensar -->
-        <section class="slide" id="slide-5">
-            <h2>Seu jeito de pensar</h2>
-            <p>Amo como você planeja nosso futuro e como seus sonhos me motivam a ser alguém melhor.</p>
-            <p class="verse">"Porque sou eu que conheço os planos que tenho para vocês... planos de fazê-los prosperar."<br>(Jeremias 29:11)</p>
+        <!-- TELA 6 -->
+        <section class="slide">
+            <h2>Nossos Sonhos</h2>
+            <p>Amo o jeito que você planeja nosso futuro.</p>
+            <div class="verse">"Porque sou eu que conheço os planos que tenho para vocês..."<br>— Jeremias 29:11</div>
         </section>
 
-        <!-- Tela 7: Fotos -->
-        <section class="slide" id="slide-6">
-            <h2>Nossos Retratos</h2>
-            <div class="photo-grid" id="photo-grid">
-                <!-- Fotos via JS -->
-            </div>
+        <!-- TELA 7 -->
+        <section class="slide">
+            <h2>Nossos Momentos</h2>
+            <div class="photo-grid" id="photo-grid"></div>
         </section>
 
-        <!-- Tela 8: Final -->
-        <section class="slide" id="slide-7">
-            <h1 style="color: var(--spotify-pink);">Feliz aniversário de namoro!</h1>
-            <p>Eu amo você, hoje e sempre.</p>
-            <p class="verse">"Com amor eterno eu a amei; com amor leal a atraí."<br>(Jeremias 31:3)</p>
-            <div style="font-size: 3rem; margin-top: 20px; animation: pulse 2s infinite;">❤️</div>
+        <!-- TELA 8 -->
+        <section class="slide">
+            <h1 style="color: var(--spotify-pink); font-size: 2rem;">Feliz Aniversário de Namoro!</h1>
+            <p>Eu te amo!</p>
+            <div class="verse">"Com amor eterno eu a amei..."<br>— Jeremias 31:3</div>
+            <div style="font-size: 3.5rem; margin-top: 30px; animation: pulse 2s infinite;">❤️</div>
         </section>
 
-        <!-- Navegação -->
+        <!-- CONTROLES -->
         <div class="nav-buttons">
-            <button class="nav-btn" onclick="changeSlide(-1)">Voltar</button>
-            <button class="nav-btn" onclick="changeSlide(1)" style="background: var(--spotify-green); color: black;">Avançar</button>
+            <button class="nav-btn" onclick="changeSlide(-1)">
+                <svg viewBox="0 0 24 24"><path d="M12.79 5.23l-6.84 6.77 6.84 6.77h-5.32l-6.84-6.77 6.84-6.77zM21.37 5.23l-6.84 6.77 6.84 6.77h-5.32l-6.84-6.77 6.84-6.77z"></path></svg>
+            </button>
+            
+            <button class="nav-btn play-btn" id="master-play-pause">
+                <!-- Ícone de Play (Triângulo) -->
+                <svg id="play-icon" viewBox="0 0 24 24"><path d="M7 3v18l14-9z"></path></svg>
+                <!-- Ícone de Pause (Duas barras) - Escondido por padrão -->
+                <svg id="pause-icon" viewBox="0 0 24 24" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"></path></svg>
+            </button>
+
+            <button class="nav-btn" onclick="changeSlide(1)">
+                <svg viewBox="0 0 24 24"><path d="M11.21 18.77l6.84-6.77-6.84-6.77h5.32l6.84 6.77-6.84 6.77zM2.63 18.77l6.84-6.77-6.84-6.77h5.32l6.84 6.77-6.84 6.77z"></path></svg>
+            </button>
         </div>
     </div>
 
-    <style>
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-            100% { transform: scale(1); }
-        }
-    </style>
+    <!-- Script da API do Spotify (Necessário para controlar o player) -->
+    <script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
 
     <script>
+        const FOTOS_PARA_ELA_VER = [
+            { url: "https://i.postimg.cc/N0zFWLSn/1.webp", legenda: "Onde tudo começou" },
+            { url: "https://i.postimg.cc/sDjz4sHL/IMG-20260601-222.webp", legenda: "Nossos beijos maravilhosos" },
+            { url: "https://i.postimg.cc/brHzNvCQ/IMG-20260601-WA0014.webp", legenda: "Aquele dia especial" }
+        ];
+
         let currentSlide = 0;
         const slides = document.querySelectorAll('.slide');
         const startDate = new Date('2025-01-05T00:00:00');
-        const adminPass = "amor2025"; 
+        let playerController = null;
+        let isPlaying = false;
+
+        // Configuração da API do Spotify
+        window.onSpotifyIframeApiReady = (IFrameAPI) => {
+            const element = document.getElementById('embed-iframe');
+            const options = {
+                width: '100%',
+                height: '80',
+                uri: 'spotify:track:1DLKuppSYytOuxhtI6KBGu'
+            };
+            IFrameAPI.createController(element, options, (EmbedController) => {
+                playerController = EmbedController;
+                
+                // Monitorar o status do player (se ela der play direto no widget)
+                EmbedController.on('playback_update', e => {
+                    updatePlayIcon(!e.data.isPaused);
+                });
+            });
+        };
+
+        const playBtn = document.getElementById('master-play-pause');
+        const playIcon = document.getElementById('play-icon');
+        const pauseIcon = document.getElementById('pause-icon');
+
+        function updatePlayIcon(playing) {
+            isPlaying = playing;
+            if (playing) {
+                playIcon.style.display = 'none';
+                pauseIcon.style.display = 'block';
+            } else {
+                playIcon.style.display = 'block';
+                pauseIcon.style.display = 'none';
+            }
+        }
+
+        playBtn.addEventListener('click', () => {
+            if (playerController) {
+                playerController.togglePlay();
+            }
+        });
 
         function changeSlide(direction) {
             slides[currentSlide].classList.remove('active');
@@ -278,83 +283,50 @@
             slides[currentSlide].classList.add('active');
         }
 
+        // Corações
+        document.addEventListener('click', (e) => {
+            const heart = document.createElement('div');
+            heart.className = 'floating-heart';
+            heart.innerHTML = '❤';
+            heart.style.left = (e.clientX - 10) + 'px';
+            heart.style.top = (e.clientY - 10) + 'px';
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 1500);
+        });
+
+        // Contador
         function updateCounter() {
-            const now = new Date();
-            const diff = now - startDate;
-
-            const dias = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const horas = Math.floor((diff / (1000 * 60 * 60)) % 24);
-            const minutos = Math.floor((diff / 1000 / 60) % 60);
-            const segundos = Math.floor((diff / 1000) % 60);
-
+            const diff = new Date() - startDate;
+            const d = Math.floor(diff / 86400000);
+            const h = Math.floor((diff / 3600000) % 24);
+            const m = Math.floor((diff / 60000) % 60);
+            const s = Math.floor((diff / 1000) % 60);
             document.getElementById('timer-display').innerHTML = `
-                <span class="counter-num">${dias} dias</span>
-                <span style="color: var(--gray); font-size: 0.9rem;">${horas}h ${minutos}m ${segundos}s</span>
+                <span class="time-unit">${d} dias</span>
+                <span class="time-sub">${h}h ${m}m ${s}s</span>
             `;
         }
         setInterval(updateCounter, 1000);
         updateCounter();
 
-        // Gerenciamento de Fotos
-        const fileInput = document.getElementById('file-input');
-        const photoGrid = document.getElementById('photo-grid');
-
-        function checkAdmin() {
-            const pass = prompt("Senha de acesso:");
-            if (pass === adminPass) fileInput.click();
-        }
-
-        fileInput.addEventListener('change', function() {
-            const file = this.files[0];
-            if (file) {
-                const date = prompt("Data ou legenda curta:");
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    savePhoto(e.target.result, date || "");
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-
-        function savePhoto(img, date) {
-            let photos = JSON.parse(localStorage.getItem('anniversary_photos') || '[]');
-            photos.push({ img, date });
-            localStorage.setItem('anniversary_photos', JSON.stringify(photos));
-            loadPhotos();
-        }
-
+        // Fotos
         function loadPhotos() {
-            let photos = JSON.parse(localStorage.getItem('anniversary_photos') || '[]');
-            photoGrid.innerHTML = photos.length ? '' : '<p style="grid-column: 1/-1; font-size: 0.8rem;">Adicione fotos clicando no + escondido.</p>';
-            
-            photos.forEach((item, index) => {
+            const grid = document.getElementById('photo-grid');
+            FOTOS_PARA_ELA_VER.forEach(foto => {
                 const div = document.createElement('div');
                 div.className = 'photo-item';
-                div.innerHTML = `
-                    <img src="${item.img}">
-                    <div class="photo-date">${item.date}</div>
-                `;
-                div.oncontextmenu = (e) => { // Clique direito ou segurar para deletar
-                    e.preventDefault();
-                    if(confirm("Apagar foto?")) {
-                        photos.splice(index, 1);
-                        localStorage.setItem('anniversary_photos', JSON.stringify(photos));
-                        loadPhotos();
-                    }
-                };
-                photoGrid.appendChild(div);
+                div.innerHTML = `<img src="${foto.url}"><div class="photo-date">${foto.legenda}</div>`;
+                grid.appendChild(div);
             });
         }
-
         loadPhotos();
 
-        // Swipe para Celular
+        // Swipe Celular
         let startX = 0;
         document.addEventListener('touchstart', e => startX = e.touches[0].clientX);
         document.addEventListener('touchend', e => {
-            let endX = e.changedTouches[0].clientX;
-            if (startX - endX > 50) changeSlide(1);
-            if (endX - startX > 50) changeSlide(-1);
+            if (startX - e.changedTouches[0].clientX > 50) changeSlide(1);
+            if (e.changedTouches[0].clientX - startX > 50) changeSlide(-1);
         });
     </script>
 </body>
